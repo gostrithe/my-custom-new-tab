@@ -6,28 +6,13 @@ const amResult = ref('')
 const phText = ref('晚上好, 妈妈')
 const isDisabled = ref(true)
 const fetchData = async () => {
-  let res = await fetch(`http://api.bjjfnet.com/data/opencode/2032`, {
-    method: 'GET',
-    mode: 'cors'
-  })
-  const json = await res.json()
-  console.log(json)
-  let flag = true
-  for (let key in json.data[0]) {
-    if (typeof json.data[0][key] !== 'string') {
-      flag = false
-    }
-  }
-  if (flag) {
-    amResult.value = json.data[0]
-  }
   fetch('https://1680660.com/smallSix/findSmallSixInfo.do', {
     method: 'GET',
     headers: {
       // ':authority': '1680660.com',
       // referer: 'https://6hch.com/'
     },
-    referrer: 'https://6hch.com/',
+    // referrer: 'https://6hch.com/',
     mode: 'cors',
     cache: 'no-cache'
   })
@@ -45,6 +30,21 @@ const fetchData = async () => {
         sixResult.value = res.result.data
       }
     })
+
+  let res = await fetch(`http://api.bjjfnet.com/data/opencode/2032`, {
+    method: 'GET'
+  })
+  const json = await res.json()
+  console.log(json)
+  let flag = true
+  for (let key in json.data[0]) {
+    if (typeof json.data[0][key] !== 'string') {
+      flag = false
+    }
+  }
+  if (flag) {
+    amResult.value = json.data[0]
+  }
 }
 onMounted(async () => {
   fetchData()

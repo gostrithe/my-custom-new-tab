@@ -31,7 +31,7 @@ const fetchData = async () => {
       }
     })
 
-  let res = await fetch(`http://api.bjjfnet.com/data/opencode/2032`, {
+  let res = await fetch(`https://api.bjjfnet.com/data/opencode/2032`, {
     method: 'GET'
   })
   const json = await res.json()

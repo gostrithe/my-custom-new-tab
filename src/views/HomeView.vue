@@ -3,6 +3,7 @@ import { onMounted, ref } from 'vue'
 // import typedJS from '../components/typedJs.vue'
 const sixResult = ref('')
 const amResult = ref('')
+const phText = ref('晚上好, 妈妈')
 const isDisabled = ref(true)
 const fetchData = async () => {
   let res = await fetch(`http://api.bjjfnet.com/data/opencode/2032`, {
@@ -73,12 +74,17 @@ const goToSearch = (e) => {
     <div id="element"></div>
     <!-- <typedJS></typedJS> -->
     <div class="search" @click="openInput">
-      <input :disabled="isDisabled" placeholder="晚上好, 妈妈" @keyup.enter="goToSearch($event)" />
+      <input :disabled="isDisabled" :placeholder="phText" @keyup.enter="goToSearch($event)" />
     </div>
     <div style="padding-top: 35vh; font-size: 20px; color: red">
       <div
         class="freshBtn"
-        @click="fetchData"
+        @click="
+          () => {
+            phText = '刷新没用就找儿子'
+            fetchData()
+          }
+        "
         style="
           margin: 0 auto;
           line-height: 2;

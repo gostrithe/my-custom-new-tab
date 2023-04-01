@@ -1,6 +1,25 @@
 <script setup>
-// import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 // import typedJS from '../components/typedJs.vue'
+const sixResult = ref('')
+onMounted(() => {
+  fetch('https://1680660.com/smallSix/findSmallSixInfo.do', {
+    method: 'GET',
+    headers: {
+      // ':authority': '1680660.com',
+      // referer: 'https://6hch.com/'
+    },
+    referrer: 'https://6hch.com/',
+    mode: 'cors',
+    cache: 'no-cache'
+  })
+    .then((res) => {
+      return res.json()
+    })
+    .then((res) => {
+      sixResult.value = res.result.data
+    })
+})
 
 const goToSearch = (e) => {
   window.open(`https://cn.bing.com/search?q=${e.target.value}`, '_blank')
@@ -13,12 +32,35 @@ const goToSearch = (e) => {
     <div id="element"></div>
     <!-- <typedJS></typedJS> -->
     <div class="search">
-      <input @keyup.enter="goToSearch($event)" />
+      <input placeholder="晚上好, 妈妈" @keyup.enter="goToSearch($event)" />
+    </div>
+    <div style="padding-top: 50vh; font-size: 20px; color: red">
+      <p>{{ sixResult.preDrawTime }}</p>
+      <p>{{ sixResult.preDrawIssue }}</p>
+      <p style="background: darkslateblue; padding: 12px; font-size: 30px">
+        <span
+          class="ball"
+          :style="index == 6 ? 'margin-left: 15px;color:blue' : ''"
+          v-for="(item, index) in sixResult.preDrawCode?.split(',')"
+          :key="index"
+        >
+          {{ item }}
+        </span>
+      </p>
     </div>
   </div>
 </template>
 
 <style lang="scss" scoped>
+.ball {
+  width: 45px;
+  height: 45px;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 100%;
+  background: linear-gradient(135deg, #fff, lightblue);
+}
 .bg {
   position: relative;
   height: 100vh;

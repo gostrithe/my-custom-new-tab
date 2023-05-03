@@ -2,17 +2,18 @@
 import { onMounted, ref } from 'vue'
 // import typedJS from '../components/typedJs.vue'
 const sixResult = ref('')
-// const showVideo = ref(false)
-const showOld = ref(false)
-// const videoSrc = ref('')
+const showVideo = ref(false)
+// const showOld = ref(false)
+const videoSrc = ref('')
 const amResult = ref('')
-const amOldResult = ref('')
+// const amOldResult = ref('')
 const phText = ref('晚上好, 妈妈')
 const isDisabled = ref(true)
-// const liveVideo = ()=>{
-//   videoSrc.value = `https://macaujc.com/static/video/2023122.mp4`
-//   showVideo.value = !showVideo.value
-// }
+const liveVideo = ()=>{
+  // videoSrc.value = `https://macaujc.com/static/video/${amResult.value.issue}.mp4`
+  videoSrc.value = `https://tv49.macaumarksix.live/lottery/video/2023/2032/${amResult.value.issue}.mp4`
+  showVideo.value = !showVideo.value
+}
 // https://kaijiangapi.net/api/trial/drawResult?code=hk6&format=json&rows=1
 // https://tv49.macaumarksix.live/lottery/video/2023/2032/2023120.mp4
 const fetchData = async () => {
@@ -71,40 +72,55 @@ const fetchData = async () => {
         sixResult.value = res.data[0]
       }
     })
-  fetch('https://www.macaumarksix.com/api/macaujc2.com')
+    fetch('https://api.macaujc.org/api/opencode/2032')
     .then((res) => {
       return res.json()
     })
     .then((res) => {
       console.log(res)
-      let a = res[0]
+      let a = res.data
       if (
-        typeof a.expect == 'string' &&
+        typeof a.issue == 'string' &&
         typeof a.openCode == 'string' &&
-        typeof a.openTime == 'string' &&
-        typeof a.wave == 'string' &&
-        typeof a.zodiac == 'string'
+        typeof a.openTime == 'string'
       ) {
         amResult.value = a
       }
     })
-  fetch('https://www.macaumarksix.com/api/macaujc.com')
-    .then((res) => {
-      return res.json()
-    })
-    .then((res) => {
-      console.log(res)
-      let a = res[0]
-      if (
-        typeof a.expect == 'string' &&
-        typeof a.openCode == 'string' &&
-        typeof a.openTime == 'string' &&
-        typeof a.wave == 'string' &&
-        typeof a.zodiac == 'string'
-      ) {
-        amOldResult.value = a
-      }
-    })
+  // fetch('https://www.macaumarksix.com/api/macaujc2.com')
+  //   .then((res) => {
+  //     return res.json()
+  //   })
+  //   .then((res) => {
+  //     console.log(res)
+  //     let a = res[0]
+  //     if (
+  //       typeof a.expect == 'string' &&
+  //       typeof a.openCode == 'string' &&
+  //       typeof a.openTime == 'string' &&
+  //       typeof a.wave == 'string' &&
+  //       typeof a.zodiac == 'string'
+  //     ) {
+  //       amResult.value = a
+  //     }
+  //   })
+  // fetch('https://www.macaumarksix.com/api/macaujc.com')
+  //   .then((res) => {
+  //     return res.json()
+  //   })
+  //   .then((res) => {
+  //     console.log(res)
+  //     let a = res[0]
+  //     if (
+  //       typeof a.expect == 'string' &&
+  //       typeof a.openCode == 'string' &&
+  //       typeof a.openTime == 'string' &&
+  //       typeof a.wave == 'string' &&
+  //       typeof a.zodiac == 'string'
+  //     ) {
+  //       amOldResult.value = a
+  //     }
+  //   })
 }
 
 onMounted(async () => {
@@ -174,26 +190,24 @@ const goToSearch = (e) => {
     <hr />
     <div style="font-size: 20px; color: red">
       <p>{{ amResult.openTime }}</p>
-      <span>{{ amResult.expect }} -- 新澳门</span>
-      <!-- <button @click="liveVideo">澳门直播视频</button> -->
+      <span>{{ amResult.issue }} -- 新澳门</span>
+      <button @click="liveVideo">直播回放视频</button>
       <div style="background: darkslateblue; padding: 12px; font-size: 30px">
         <span
           class="ball"
-          style="color: #fff;"
-          :style="{background: `${amResult.wave?.split(',')[index]}`, marginLeft: `${index==6?'15px':''}`}"
+          :style="index == 6 ? 'margin-left: 15px;color:blue' : ''"
           v-for="(item, index) in amResult.openCode?.split(',')"
           :key="index"
         >
           {{ item }}
         </span>
       </div>
-      <!-- <video v-if="showVideo" controls width="300" :src="videoSrc"></video> -->
+      <video v-if="showVideo" controls style="width: 100vw;" :src="videoSrc"></video>
     </div>
-    <button @click="showOld=!showOld">{{!showOld?'点击查看旧澳门':'收起'}}</button>
+    <!-- <button @click="showOld=!showOld">{{!showOld?'点击查看旧澳门':'收起'}}</button>
     <div v-if="showOld" style="font-size: 20px; color: red">
       <p>{{ amOldResult.openTime }}</p>
       <span>{{ amOldResult.expect }} -- 旧澳门</span>
-      <!-- <button @click="liveVideo">澳门直播视频</button> -->
       <div style="background: darkslateblue; padding: 12px; font-size: 30px">
         <span
           class="ball"
@@ -205,7 +219,7 @@ const goToSearch = (e) => {
           {{ item }}
         </span>
       </div>
-    </div>
+    </div> -->
   </div>
 </template>
 

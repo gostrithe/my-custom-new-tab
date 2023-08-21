@@ -1,14 +1,23 @@
 <script setup>
-import { onMounted, ref } from 'vue'
+import { nextTick, onMounted, ref } from 'vue'
 // import typedJS from '../components/typedJs.vue'
 const sixResult = ref('')
 const showVideo = ref(false)
+const showIframe = ref(false)
+const iid = ref(null)
 // const showOld = ref(false)
 const videoSrc = ref('')
 const amResult = ref('')
 // const amOldResult = ref('')
 const phText = ref('晚上好, 妈妈')
 const isDisabled = ref(true)
+const showIframeFn = () => {
+  showIframe.value = !showIframe.value
+  
+  nextTick(()=>{
+    document.documentElement.scrollTop = 450
+  })
+}
 const liveVideo = ()=>{
   // videoSrc.value = `https://macaujc.com/static/video/${amResult.value.issue}.mp4`
   videoSrc.value = `https://tv49.macaumarksix.live/lottery/video/2023/2032/${amResult.value.issue}.mp4`
@@ -17,30 +26,30 @@ const liveVideo = ()=>{
 // https://kaijiangapi.net/api/trial/drawResult?code=hk6&format=json&rows=1
 // https://tv49.macaumarksix.live/lottery/video/2023/2032/2023120.mp4
 const fetchData = async () => {
-  // fetch('https://1680660.com/smallSix/findSmallSixInfo.do', {
-  //   method: 'GET',
-  //   headers: {
-  //     // ':authority': '1680660.com',
-  //     // referer: 'https://6hch.com/'
-  //   },
-  //   // referrer: 'https://6hch.com/',
-  //   mode: 'cors',
-  //   cache: 'no-cache'
-  // })
-  //   .then((res) => {
-  //     return res.json()
-  //   })
-  //   .then((res) => {
-  //     console.log(res)
-  //     let a = res.result.data
-  //     if (
-  //       typeof a.preDrawCode == 'string' &&
-  //       typeof a.preDrawIssue == 'number' &&
-  //       typeof a.preDrawTime == 'string'
-  //     ) {
-  //       sixResult.value = res.result.data
-  //     }
-  //   })
+  fetch('https://1680660.com/smallSix/findSmallSixInfo.do', {
+    method: 'GET',
+    // headers: {
+    //   // ':authority': '1680660.com',
+    //   // referer: 'https://6hch.com/'
+    // },
+    // // referrer: 'https://6hch.com/',
+    // mode: 'cors',
+    // cache: 'no-cache'
+  })
+    .then((res) => {
+      return res.json()
+    })
+    .then((res) => {
+      console.log(res)
+      let a = res.result.data
+      if (
+        typeof a.preDrawCode == 'string' &&
+        typeof a.preDrawIssue == 'number' &&
+        typeof a.preDrawTime == 'string'
+      ) {
+        sixResult.value = res.result.data
+      }
+    })
 
   // let res = await fetch(`https://api.bjjfnet.com/data/opencode/2032`, {
   //   method: 'GET'
@@ -57,21 +66,47 @@ const fetchData = async () => {
   //   amResult.value = json.data[0]
   // }
 
-  fetch('https://kaijiangapi.net/api/trial/drawResult?code=hk6&format=json&rows=1')
-    .then((res) => {
-      return res.json()
-    })
-    .then((res) => {
-      console.log(res)
-      let a = res.data[0]
-      if (
-        typeof a.issue == 'string' &&
-        typeof a.drawResult == 'string' &&
-        typeof a.drawTime == 'string'
-      ) {
-        sixResult.value = res.data[0]
-      }
-    })
+  // fetch('https://bet.hkjc.com/contentserver/jcbw/cmc/last30draw.json', 
+  // {
+  //   method: 'GET',
+  //   mode: 'no-cors',
+  //   headers: {
+  //     'Referer': 'none',
+  //     'Sec-Fetch-Dest':'document',
+  //     'Sec-Fetch-Mode':'no-navigate',
+  //     'Sec-Fetch-Site':'none',
+  //     'Sec-Fetch-User':'?1',
+  //     'Upgrade-Insecure-Requests':'1',
+  // }
+  // })
+  //   .then((res) => {
+  //     // eslint-disable-next-line no-debugger
+  //     debugger;
+  //     // let a = res.json()
+  //     // console.log(a)
+
+  //     return res
+  //   })
+  //   .catch(err=>console.log(err))
+  //   .then((res) => {
+  //     // eslint-disable-next-line no-debugger
+  //     debugger;
+  //     console.log(res)
+  //     let a = res[0]
+  //     if (
+  //       typeof a.id == 'string' &&
+  //       typeof a.no == 'string' &&
+  //       typeof a.sno == 'string' &&
+  //       typeof a.date == 'string'
+  //     ) {
+  //       sixResult.value = res[0]
+  //     }
+  //   })
+  //   .catch(err=>console.log(err))
+  
+
+
+
     fetch('https://api.macaujc.org/api/opencode/2032')
     .then((res) => {
       return res.json()
@@ -146,6 +181,8 @@ const goToSearch = (e) => {
 </script>
 
 <template>
+      <iframe height="1035px" v-if="showIframe" id="iid" :ref="iid" width="100%" sandbox src="https://bet.hkjc.com/marksix/index.aspx?lang=ch"></iframe>
+  
   <div class="bg">
     <div class="circleAnimate"></div>
     <div id="element"></div>
@@ -174,13 +211,14 @@ const goToSearch = (e) => {
       >
         刷新一下
       </div>
-      <p>{{ sixResult.drawTime }}</p>
-      <span>{{ sixResult.issue }} -- 香港</span>
+      <p>{{ sixResult.preDrawTime}}</p>
+      <span>{{ sixResult.preDrawIssue }} -- 香港</span>
+      <button @click="showIframeFn">官网</button>
       <div style="background: darkslateblue; padding: 12px; font-size: 30px">
         <span
           class="ball"
           :style="index == 6 ? 'margin-left: 15px;color:blue' : ''"
-          v-for="(item, index) in sixResult.drawResult?.split(',')"
+          v-for="(item, index) in sixResult.preDrawCode?.split(',')"
           :key="index"
         >
           {{ item }}
